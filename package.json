@@ -1,0 +1,15 @@
+{
+  "name": "my-watcher",
+  "version": "1.0.0",
+  "description": "Another ile watcher to build things when file a file changed",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bin": {
+    "my-watcher": "./my-watcher.js"
+  }
+}
