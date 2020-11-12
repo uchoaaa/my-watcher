@@ -58,7 +58,7 @@ function runCmd() {
     console.log(`${stdout}`);
 
     lastRunAt = new Date();
-    building = false;
+    running = false;
   });
 }
 
