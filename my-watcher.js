@@ -2,55 +2,62 @@
 
 const [,, ... args] = process.argv
 
-console.log(args);
-
-const watchingFile = args[0] 
+const fileOrFolder = args[0] 
 const cmd = args[1]
+let delay = args[2];
+
+if(delay){
+  delay = parseInt(delay)
+} else {
+  delay = 1000
+}
+
+console.log("Running with args:", [fileOrFolder, cmd, delay]);
 
 const fs = require('fs');
 const { exec } = require("child_process");
 
-let lastBuildAt = new Date();
-let building = false;
+let lastRunAt = new Date();
+let running = false;
 
-fs.watch(watchingFile, { recursive: true }, (event, filename) => {
+fs.watch(fileOrFolder, { recursive: true }, (event, filename) => {
   if (filename && filename !== '.DS_Store') {
 
     let now = new Date();
 
-    if(now-lastBuildAt < 3000) { // ultimo build foi à mais de 3s
-      console.log('Já buildei agora pouco, segura a onda aí, macho...');
+    if(now-lastRunAt < delay) { // ultimo build foi à mais de :delay em ms
+      console.log('Já rodei agora pouco, segura a onda aí, macho...');
       return false;
     }
 
-    if(building) {
-      console.log('Tou buildando, segura a onda aí, macho...');
+    if(running) {
+      console.log('Tou rodando, segura a onda aí, macho...');
       return false;
     }
 
-    console.log(`${filename} alterado. Buildando...`);
-    buildApp();
+    console.log(`${filename} alterado. Vou rodar...`);
+    runCmd();
   }
 });
 
-function buildApp() {
-  building = true;
+function runCmd() {
+  running = true;
 
   exec(cmd, (error, stdout, stderr) => {
     if (error) {
-      building = false;
+      running = false;
       console.log(`error: ${error.message}`);
       return;
     }
     if (stderr) {
-      building = false;
+      running = false;
       console.log(`stderr: ${stderr}`);
       return;
     }
     
     console.log(`${stdout}`);
 
-    lastBuildAt = new Date();
+    lastRunAt = new Date();
     building = false;
   });
 }
